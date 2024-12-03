@@ -93,7 +93,7 @@ Response Body Example:
 ]
 ```
 ---
-4. Delete a Payment
+### 4. Delete a Payment
 Endpoint: DELETE /api/payments/{paymentId}
 
 Description: Deletes a payment by its ID.
@@ -113,7 +113,7 @@ Response Body:
 }
 ```
 ---
-5. Update a Payment
+### 5. Update a Payment
 Endpoint: PUT /api/payments/{paymentId}
 
 Description: Updates an existing payment by its ID.
