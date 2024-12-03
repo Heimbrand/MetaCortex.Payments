@@ -1,5 +1,6 @@
 ﻿using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
+using MetaCortex.Payments.DataAccess.RabbitMq;
 using MetaCortex.Payments.DataAccess.Repository;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -21,12 +22,21 @@ public static class PaymentEndpointExtensions
         return app;
     }
     #region Methods
-    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IPaymentRepository repo)
+    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IPaymentRepository repo, IMessageProducerService messageProducer)
     {
         try
         {
             var payments = await repo.GetAllAsync();
+
+            foreach (var payment in payments)
+            {
+                await messageProducer.SendMessageAsync($"Order sent: {payment.OrderId}");
+                await messageProducer.SendMessageAsync(payment.PaymentMethod);
+                await messageProducer.SendMessageAsync(payment.Status );
+            }
+
             return Results.Ok(payments);
+
         }
         catch (Exception e)
         {
@@ -47,7 +57,7 @@ public static class PaymentEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> AddPaymentAsync([FromServices] IPaymentRepository repo,[FromBody]  Payment payment)
+    public static async Task<IResult> AddPaymentAsync([FromServices] IPaymentRepository repo, [FromBody] Payment payment)
     {
         try
         {

@@ -1,6 +1,8 @@
 using MetaCortex.Payments.API.Extensions;
+using MetaCortex.Payments.API.RabbitMq;
 using MetaCortex.Payments.DataAccess;
 using MetaCortex.Payments.DataAccess.Interfaces;
+using MetaCortex.Payments.DataAccess.RabbitMq;
 using MetaCortex.Payments.DataAccess.Repository;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -16,12 +18,20 @@ builder.Services.AddSingleton<IMongoClient>( serviceProvider =>
     return new MongoClient($"mongodb://{settings.Host}:{settings.Port}");
 });
 builder.Services.AddSingleton<IPaymentRepository, PaymentRepository>();
+builder.Services.AddSingleton(sp => new RabbitMqConfiguration()
+{
+    HostName = "localhost",
+    Username = "guest",
+    Password = "guest"
+});
 
+builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
+builder.Services.AddSingleton<IMessageProducerService, MessageProducerService>();
+builder.Services.AddSingleton<IMessageConsumerService, MessageConsumerService>();
+builder.Services.AddHostedService<MessageConsumerHostedService>();
 
 
 var app = builder.Build();
-
-
 
 app.UseHttpsRedirection();
 
