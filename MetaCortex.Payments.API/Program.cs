@@ -18,12 +18,9 @@ builder.Services.AddSingleton<IMongoClient>( serviceProvider =>
     return new MongoClient($"mongodb://{settings.Host}:{settings.Port}");
 });
 builder.Services.AddSingleton<IPaymentRepository, PaymentRepository>();
-builder.Services.AddSingleton(sp => new RabbitMqConfiguration()
-{
-    HostName = "localhost",
-    Username = "guest",
-    Password = "guest"
-});
+builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqSettings"));
+builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value);
+builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
 
 builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
 builder.Services.AddSingleton<IMessageProducerService, MessageProducerService>();

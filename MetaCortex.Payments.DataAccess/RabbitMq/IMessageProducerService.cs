@@ -1,6 +1,8 @@
-﻿namespace MetaCortex.Payments.DataAccess.RabbitMq;
+﻿using MetaCortex.Payments.DataAccess.Entities;
+
+namespace MetaCortex.Payments.DataAccess.RabbitMq;
 
 public interface IMessageProducerService
 {
-    Task SendMessageAsync<T>(T order);
+    Task SendPaymentToOrderAsync<T>(T order, string sendChannel);
 }

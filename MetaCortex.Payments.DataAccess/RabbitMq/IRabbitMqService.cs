@@ -5,5 +5,5 @@ namespace MetaCortex.Payments.DataAccess.RabbitMq;
 
 public interface IRabbitMqService
 {
-   Task <IConnection>  CreateConnection();
+   Task <IConnection> CreateConnection();
 }

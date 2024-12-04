@@ -1,5 +1,9 @@
 ﻿using System.Text;
+using System.Text.Json;
+using MetaCortex.Payments.DataAccess.Entities;
+using MetaCortex.Payments.DataAccess.Interfaces;
 using MetaCortex.Payments.DataAccess.RabbitMq;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -7,27 +11,34 @@ namespace MetaCortex.Payments.API.RabbitMq;
 
 public class MessageConsumerService : IMessageConsumerService
 {
+    private readonly IChannel _channel;
+    private readonly IConnection _connection;
+    private const string QueueName = "order-to-payment";
+    private readonly ProcessConsumedOrderService _processedOrderService;
+
+    public MessageConsumerService(IRabbitMqService rabbitMqService, IPaymentRepository paymentRepository)
+    {
+        _connection = rabbitMqService.CreateConnection().Result;
+        _channel = _connection.CreateChannelAsync().Result;
+        _channel.QueueDeclareAsync(QueueName, false, false, false).Wait();
+        _processedOrderService = new ProcessConsumedOrderService(paymentRepository);
+    }
     public async Task ReadMessagesAsync()
     {
-        var factory = new ConnectionFactory()
-        {
-            HostName = "localhost",
-            UserName = "guest",
-        };
 
-        using var connection = await factory.CreateConnectionAsync();
-        using var channel = await connection.CreateChannelAsync();
-
-
-        await channel.QueueDeclareAsync("payments", true, false, false);
-        var consumer = new AsyncEventingBasicConsumer(channel);
+        var consumer = new AsyncEventingBasicConsumer(_channel);
 
         consumer.ReceivedAsync += async (model, ea) =>
         {
             var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine($"Message: {message}");
+            var payment = Encoding.UTF8.GetString(body);
+            var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
+            Console.WriteLine(processedPayment);
         };
-        await channel.BasicConsumeAsync("payments", true, consumer);
+
+
+        await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
+
+        await Task.CompletedTask;
     }
 }

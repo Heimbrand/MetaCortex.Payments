@@ -1,29 +1,39 @@
 ﻿using System.Text;
 using System.Text.Json;
+using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.RabbitMq;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using RabbitMQ.Client;
 
 namespace MetaCortex.Payments.API.RabbitMq;
 
-public class MessageProducerService(RabbitMqConfiguration config) : IMessageProducerService
+public class MessageProducerService : IMessageProducerService
 {
-    private readonly ConnectionFactory _connectionFactory = new()
+    private readonly ConnectionFactory _factory;
+    private readonly IConnection _connection;
+    private readonly IChannel _channel;
+
+    public MessageProducerService(RabbitMqConfiguration config)
     {
-        HostName = config.HostName,
-        UserName = config.Username,
-        Password = config.Password,
-        VirtualHost = "/"
-    };
+        _factory = new ConnectionFactory
+        {
+            HostName = config.HostName,
+            UserName = config.Username,
+            Password = config.Password
+        };
+        _connection = _factory.CreateConnectionAsync().Result;
+        _channel = _connection.CreateChannelAsync().Result;
+    }
 
-    public async Task SendMessageAsync<T>(T payment)
+    public async Task SendPaymentToOrderAsync<T>(T order, string sendChannel)
     {
-        using var connection = await _connectionFactory.CreateConnectionAsync(); 
-        using var channel = await connection.CreateChannelAsync();
-        await channel.QueueDeclareAsync("payments", true, false, false);
+        await _channel.QueueDeclareAsync("payment-to-order", false, false, false);
 
-        var jsonString = JsonSerializer.Serialize(payment);
-        var body = Encoding.UTF8.GetBytes(jsonString);
+        var json = JsonSerializer.Serialize(order);
+        var body = Encoding.UTF8.GetBytes(json);
 
-        await channel.BasicPublishAsync(string.Empty, "payments",body);
+        await _channel.BasicPublishAsync("", sendChannel, body);
+
+        Console.WriteLine($"Payment for order: {order} is sent back order");
     }
 }

@@ -1,4 +1,5 @@
-﻿using MetaCortex.Payments.DataAccess.Entities;
+﻿using MetaCortex.Payments.API.RabbitMq;
+using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
 using MetaCortex.Payments.DataAccess.RabbitMq;
 using MetaCortex.Payments.DataAccess.Repository;
@@ -22,18 +23,12 @@ public static class PaymentEndpointExtensions
         return app;
     }
     #region Methods
-    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IPaymentRepository repo, IMessageProducerService messageProducer)
+    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IPaymentRepository repo)
     {
         try
         {
             var payments = await repo.GetAllAsync();
 
-            foreach (var payment in payments)
-            {
-                await messageProducer.SendMessageAsync($"Order sent: {payment.OrderId}");
-                await messageProducer.SendMessageAsync(payment.PaymentMethod);
-                await messageProducer.SendMessageAsync(payment.Status );
-            }
 
             return Results.Ok(payments);
 
@@ -57,11 +52,15 @@ public static class PaymentEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> AddPaymentAsync([FromServices] IPaymentRepository repo, [FromBody] Payment payment)
+    public static async Task<IResult> AddPaymentAsync([FromServices] IPaymentRepository repo, IMessageConsumerService messageConsumer, IMessageProducerService messageProducer, [FromBody] Payment payment)
     {
         try
         {
             await repo.AddAsync(payment);
+
+            await messageConsumer.ReadMessagesAsync();
+            await messageProducer.SendPaymentToOrderAsync(payment, sendChannel: "test");
+
             return Results.Created($"/api/payments/{payment.Id}", payment);
         }
         catch (Exception e)
