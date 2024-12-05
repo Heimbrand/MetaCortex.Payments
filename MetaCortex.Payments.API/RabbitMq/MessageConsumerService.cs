@@ -15,6 +15,7 @@ public class MessageConsumerService : IMessageConsumerService
     private readonly IConnection _connection;
     private const string QueueName = "order-to-payment";
     private readonly ProcessConsumedOrderService _processedOrderService;
+    private readonly MessageProducerService _messageProducerService;
 
     public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedOrderRepository processedOrderRepository)
     {
@@ -25,7 +26,6 @@ public class MessageConsumerService : IMessageConsumerService
     }
     public async Task ReadMessagesAsync()
     {
-
         var consumer = new AsyncEventingBasicConsumer(_channel);
 
         consumer.ReceivedAsync += async (model, ea) =>
@@ -34,11 +34,9 @@ public class MessageConsumerService : IMessageConsumerService
             var payment = Encoding.UTF8.GetString(body);
             var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
             Console.WriteLine(processedPayment);
+            await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
         };
-
-
         await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
-
         await Task.CompletedTask;
     }
 }
