@@ -6,17 +6,17 @@ using Microsoft.Extensions.Options;
 
 namespace MetaCortex.Payments.DataAccess.Repository;
 
-public class PaymentRepository : IPaymentRepository
+public class ProcessedOrderRepository : IProcessedOrderRepository
 {
-    private readonly IMongoCollection<Payment> _collection;
+    private readonly IMongoCollection<ProcessedOrder> _collection;
 
-    public PaymentRepository(IMongoClient mongoClient, IOptions<MongoDbSettings> mongoDbSettings)
+    public ProcessedOrderRepository(IMongoClient mongoClient, IOptions<MongoDbSettings> mongoDbSettings)
     {
         var setting = mongoDbSettings.Value;
         var database = mongoClient.GetDatabase(setting.DatabaseName);
-        _collection = database.GetCollection<Payment>(setting.CollectionName, new MongoCollectionSettings { AssignIdOnInsert = true });
+        _collection = database.GetCollection<ProcessedOrder>(setting.CollectionName, new MongoCollectionSettings { AssignIdOnInsert = true });
     }
-    public async Task<IEnumerable<Payment>> GetAllAsync()
+    public async Task<IEnumerable<ProcessedOrder>> GetAllAsync()
     {
         var payments = await _collection.Find(new BsonDocument()).ToListAsync();
 
@@ -25,7 +25,7 @@ public class PaymentRepository : IPaymentRepository
         
         return payments;
     }
-    public async Task<Payment> GetByIdAsync(string id)
+    public async Task<ProcessedOrder> GetByIdAsync(string id)
     {
         var paymentByid =  await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
@@ -34,11 +34,11 @@ public class PaymentRepository : IPaymentRepository
 
         return paymentByid;
     }
-    public async Task AddAsync(Payment entity)
+    public async Task AddAsync(ProcessedOrder entity)
     {
         await _collection.InsertOneAsync(entity);
     }
-    public async Task UpdateAsync(Payment entity)
+    public async Task UpdateAsync(ProcessedOrder entity)
     {
         await _collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
     }

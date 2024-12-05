@@ -9,26 +9,34 @@ namespace MetaCortex.Payments.API.RabbitMq;
 
 public class ProcessConsumedOrderService
 {
-    private readonly IPaymentRepository _paymentRepository;
-    public ProcessConsumedOrderService(IPaymentRepository paymentRepository)
+    private readonly IProcessedOrderRepository _processedOrderRepository;
+    public ProcessConsumedOrderService(IProcessedOrderRepository processedOrderRepository)
     {
-        _paymentRepository = paymentRepository;
+        _processedOrderRepository = processedOrderRepository;
     }
-    public async Task<Payment> ProcessOrderAsync(string order)
+    public async Task<ProcessedOrder> ProcessOrderAsync(string order)
     {
-        var orderDto = JsonSerializer.Deserialize<OrderDto>(order);
+        var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
         if (orderDto is not null)
         {
-            var payment = new Payment
+            var ProcessedOrder = new ProcessedOrder
             {
                 OrderId = orderDto.OrderId,
-                PaymentMethod = orderDto.PaymentMethod,
-                IsPaid = true,
+                OrderDate = orderDto.OrderDate,
+                CustomerId = orderDto.CustomerId,
+                VIPStatus = orderDto.VIPStatus,
+                Products = orderDto.Products,
+                PaymentPlan = new Payment
+                {
+                    OrderId = orderDto.OrderId,
+                    PaymentMethod = orderDto.PaymentMethod,
+                    IsPaid = orderDto.IsPaid,
+                }
             };
-            await _paymentRepository.AddAsync(payment);
+            await _processedOrderRepository.AddAsync(ProcessedOrder);
            
-            return payment;
+            return ProcessedOrder;
         }
         return null;
     }

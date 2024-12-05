@@ -8,7 +8,7 @@ using MongoDB.Bson;
 
 namespace MetaCortex.Payments.API.Extensions;
 
-public static class PaymentEndpointExtensions
+public static class ProcessedOrderEndpointExtensions
 {
     public static IEndpointRouteBuilder MapPaymentEndpoints(this IEndpointRouteBuilder app)
     {
@@ -23,7 +23,7 @@ public static class PaymentEndpointExtensions
         return app;
     }
     #region Methods
-    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IPaymentRepository repo)
+    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IProcessedOrderRepository repo)
     {
         try
         {
@@ -39,7 +39,7 @@ public static class PaymentEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> GetPaymentByIdAsync([FromServices] IPaymentRepository repo, string id)
+    public static async Task<IResult> GetPaymentByIdAsync([FromServices] IProcessedOrderRepository repo, string id)
     {
         try
         {
@@ -52,7 +52,7 @@ public static class PaymentEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> AddPaymentAsync([FromServices] IPaymentRepository repo, IMessageConsumerService messageConsumer, IMessageProducerService messageProducer, [FromBody] Payment payment)
+    public static async Task<IResult> AddPaymentAsync([FromServices] IProcessedOrderRepository repo, IMessageConsumerService messageConsumer, IMessageProducerService messageProducer, [FromBody] ProcessedOrder payment)
     {
         try
         {
@@ -69,7 +69,7 @@ public static class PaymentEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> UpdatePaymentAsync([FromServices] IPaymentRepository repo, [FromBody] Payment payment)
+    public static async Task<IResult> UpdatePaymentAsync([FromServices] IProcessedOrderRepository repo, [FromBody] ProcessedOrder payment)
     {
         try
         {
@@ -82,7 +82,7 @@ public static class PaymentEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> DeletePaymentAsync([FromServices] IPaymentRepository repo, string id)
+    public static async Task<IResult> DeletePaymentAsync([FromServices] IProcessedOrderRepository repo, string id)
     {
         try
         {

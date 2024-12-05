@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace MetaCortex.Payments.DataAccess.Interfaces;
 
-public interface IPaymentRepository : IRepository<Payment, string>
+public interface IProcessedOrderRepository : IRepository<ProcessedOrder, string>
 {
     
 }

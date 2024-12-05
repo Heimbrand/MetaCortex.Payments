@@ -16,12 +16,12 @@ public class MessageConsumerService : IMessageConsumerService
     private const string QueueName = "order-to-payment";
     private readonly ProcessConsumedOrderService _processedOrderService;
 
-    public MessageConsumerService(IRabbitMqService rabbitMqService, IPaymentRepository paymentRepository)
+    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedOrderRepository processedOrderRepository)
     {
         _connection = rabbitMqService.CreateConnection().Result;
         _channel = _connection.CreateChannelAsync().Result;
         _channel.QueueDeclareAsync(QueueName, false, false, false).Wait();
-        _processedOrderService = new ProcessConsumedOrderService(paymentRepository);
+        _processedOrderService = new ProcessConsumedOrderService(processedOrderRepository);
     }
     public async Task ReadMessagesAsync()
     {

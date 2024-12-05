@@ -1,8 +1,8 @@
 ﻿namespace MetaCortex.Payments.DataAccess.Entities;
 
-public class Payment : BaseDocument
+public class Payment 
 {
-    public string OrderId { get; set; } = default!;
+    public string? OrderId { get; set; } = default!;
     public string? PaymentMethod { get; set; }
     public bool IsPaid { get; set; }
 }
