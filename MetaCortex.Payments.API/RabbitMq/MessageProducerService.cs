@@ -22,16 +22,24 @@ public class MessageProducerService : IMessageProducerService
         _connection = _factory.CreateConnectionAsync().Result;
         _channel = _connection.CreateChannelAsync().Result;
     }
-
     public async Task SendPaymentToOrderAsync<T>(T order, string sendChannel)
     {
-        await _channel.QueueDeclareAsync(sendChannel, false, false, false);
+        try
+        {
+            Console.WriteLine($"Declaring queue: {sendChannel}");
+            await _channel.QueueDeclareAsync(sendChannel, false, false, false);
 
-        var json = JsonSerializer.Serialize(order);
-        var body = Encoding.UTF8.GetBytes(json);
+            var json = JsonSerializer.Serialize(order);
+            var body = Encoding.UTF8.GetBytes(json);
 
-        await _channel.BasicPublishAsync("", sendChannel, body);
+            Console.WriteLine($"Publishing message to queue: {sendChannel}");
+            await _channel.BasicPublishAsync("", sendChannel, body);
 
-        Console.WriteLine($"Payment for order: {order} is sent back order");
+            Console.WriteLine($"Payment for order: {order} is sent back to order queue: {sendChannel}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending payment to order: {ex.Message}");
+        }
     }
 }

@@ -14,12 +14,13 @@ public class MessageConsumerService : IMessageConsumerService
     private readonly ProcessConsumedOrderService _processedOrderService;
     private readonly MessageProducerService _messageProducerService;
 
-    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedOrderRepository processedOrderRepository)
+    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedOrderRepository processedOrderRepository, MessageProducerService messageProducerService)
     {
         _connection = rabbitMqService.CreateConnection().Result;
         _channel = _connection.CreateChannelAsync().Result;
         _channel.QueueDeclareAsync(QueueName, false, false, false).Wait();
         _processedOrderService = new ProcessConsumedOrderService(processedOrderRepository);
+        _messageProducerService = messageProducerService;
     }
     public async Task ReadMessagesAsync()
     {
@@ -27,12 +28,18 @@ public class MessageConsumerService : IMessageConsumerService
 
         consumer.ReceivedAsync += async (model, ea) =>
         {
-            var body = ea.Body.ToArray();
-            var payment = Encoding.UTF8.GetString(body);
-            var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-            Console.WriteLine(processedPayment);
-            await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
-            Console.WriteLine("Order sent back with updated payment.");
+            try
+            {
+                var body = ea.Body.ToArray();
+                var payment = Encoding.UTF8.GetString(body);
+                var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
+                Console.WriteLine(processedPayment);
+                await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing message: {ex.Message}");
+            }
         };
         await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
         await Task.CompletedTask;
