@@ -20,7 +20,7 @@ public class MessageConsumerService : IMessageConsumerService
         _channel = _connection.CreateChannelAsync().Result;
         _channel.QueueDeclareAsync(QueueName, false, false, false).Wait();
         _processedOrderService = new ProcessConsumedOrderService(processedOrderRepository);
-        _messageProducerService = messageProducerService;
+
     }
     public async Task ReadMessagesAsync()
     {
@@ -28,18 +28,11 @@ public class MessageConsumerService : IMessageConsumerService
 
         consumer.ReceivedAsync += async (model, ea) =>
         {
-            try
-            {
-                var body = ea.Body.ToArray();
-                var payment = Encoding.UTF8.GetString(body);
-                var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-                Console.WriteLine(processedPayment);
-                await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error processing message: {ex.Message}");
-            }
+            var body = ea.Body.ToArray();
+            var payment = Encoding.UTF8.GetString(body);
+            var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
+            Console.WriteLine(processedPayment);
+            await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
         };
         await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
         await Task.CompletedTask;

@@ -22,7 +22,7 @@ builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSecti
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value);
 builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
 
-builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
+
 builder.Services.AddSingleton<IMessageProducerService, MessageProducerService>();
 builder.Services.AddSingleton<IMessageConsumerService, MessageConsumerService>();
 builder.Services.AddHostedService<MessageConsumerHostedService>();
