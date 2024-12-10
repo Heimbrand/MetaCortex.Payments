@@ -32,6 +32,7 @@ public class MessageConsumerService : IMessageConsumerService
             var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
             Console.WriteLine(processedPayment);
             await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
+            Console.WriteLine("Order sent back with updated payment.");
         };
         await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
         await Task.CompletedTask;
