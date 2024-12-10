@@ -4,6 +4,7 @@ WORKDIR /App
 COPY ./MetaCortex.Payments.sln ./
 
 COPY ./MetaCortex.Payments.API/MetaCortex.Payments.API.csproj ./MetaCortex.Payments.API/
+COPY ./MetaCortex.Payments.DataAccess/MetaCortex.Payments.DataAccess.csproj ./MetaCortex.Payments.DataAccess/
 RUN dotnet restore MetaCortex.Payments.sln
 
 COPY ./ ./
