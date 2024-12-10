@@ -1,10 +1,7 @@
-﻿using MetaCortex.Payments.API.RabbitMq;
-using MetaCortex.Payments.DataAccess.Entities;
+﻿using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
 using MetaCortex.Payments.DataAccess.RabbitMq;
-using MetaCortex.Payments.DataAccess.Repository;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 
 namespace MetaCortex.Payments.API.Extensions;
 

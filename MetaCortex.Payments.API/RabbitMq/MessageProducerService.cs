@@ -1,8 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.RabbitMq;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using RabbitMQ.Client;
 
 namespace MetaCortex.Payments.API.RabbitMq;
@@ -27,7 +25,7 @@ public class MessageProducerService : IMessageProducerService
 
     public async Task SendPaymentToOrderAsync<T>(T order, string sendChannel)
     {
-        await _channel.QueueDeclareAsync("payment-to-order", false, false, false);
+        await _channel.QueueDeclareAsync(sendChannel, false, false, false);
 
         var json = JsonSerializer.Serialize(order);
         var body = Encoding.UTF8.GetBytes(json);

@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using MetaCortex.Payments.DataAccess.RabbitMq;
+﻿using MetaCortex.Payments.DataAccess.RabbitMq;
 using RabbitMQ.Client;
 
 namespace MetaCortex.Payments.API.RabbitMq;

@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Microsoft.Extensions.Options;
 
+
 namespace MetaCortex.Payments.DataAccess.Repository;
 
 public class ProcessedOrderRepository : IProcessedOrderRepository
@@ -18,6 +19,8 @@ public class ProcessedOrderRepository : IProcessedOrderRepository
     }
     public async Task<IEnumerable<ProcessedOrder>> GetAllAsync()
     {
+        
+
         var payments = await _collection.Find(new BsonDocument()).ToListAsync();
 
         if (payments is null || !payments.Any())

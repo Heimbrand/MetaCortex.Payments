@@ -1,9 +1,6 @@
 ﻿using System.Text.Json;
 using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
-using Microsoft.AspNetCore.Razor.TagHelpers;
-using MongoDB.Bson;
-using MongoDB.Bson.IO;
 
 namespace MetaCortex.Payments.API.RabbitMq;
 

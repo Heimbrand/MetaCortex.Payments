@@ -1,9 +1,6 @@
 ﻿using System.Text;
-using System.Text.Json;
-using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
 using MetaCortex.Payments.DataAccess.RabbitMq;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 

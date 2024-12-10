@@ -1,5 +1,4 @@
 ﻿using MetaCortex.Payments.DataAccess.Entities;
-using MongoDB.Bson;
 
 namespace MetaCortex.Payments.DataAccess.Interfaces;
 

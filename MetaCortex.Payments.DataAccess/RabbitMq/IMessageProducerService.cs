@@ -1,6 +1,4 @@
-﻿using MetaCortex.Payments.DataAccess.Entities;
-
-namespace MetaCortex.Payments.DataAccess.RabbitMq;
+﻿namespace MetaCortex.Payments.DataAccess.RabbitMq;
 
 public interface IMessageProducerService
 {

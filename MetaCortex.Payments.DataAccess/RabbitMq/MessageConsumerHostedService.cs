@@ -1,5 +1,4 @@
-﻿using MetaCortex.Payments.DataAccess.Entities;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace MetaCortex.Payments.DataAccess.RabbitMq;
 
