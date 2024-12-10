@@ -3,7 +3,7 @@ WORKDIR /App
 
 COPY ./MetaCortex.Payments.sln ./
 
-COPY ./MetaCortex.Payments.API/MetaCortex.Orders.API.csproj ./MetaCortex.Payments.API/
+COPY ./MetaCortex.Payments.API/MetaCortex.Payments.API.csproj ./MetaCortex.Payments.API/
 RUN dotnet restore MetaCortex.Payments.sln
 
 COPY ./ ./
