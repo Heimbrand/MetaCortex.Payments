@@ -21,8 +21,6 @@ builder.Services.AddSingleton<IProcessedOrderRepository, ProcessedOrderRepositor
 builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqSettings"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value);
 builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
-
-
 builder.Services.AddSingleton<IMessageProducerService, MessageProducerService>();
 builder.Services.AddSingleton<IMessageConsumerService, MessageConsumerService>();
 builder.Services.AddHostedService<MessageConsumerHostedService>();
