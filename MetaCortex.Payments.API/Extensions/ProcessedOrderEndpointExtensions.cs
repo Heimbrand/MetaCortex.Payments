@@ -20,7 +20,7 @@ public static class ProcessedOrderEndpointExtensions
         return app;
     }
     #region Methods
-    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IProcessedOrderRepository repo)
+    public static async Task<IResult> GetAllPaymentsAsync([FromServices] IProcessedPaymentHistoryRepository repo)
     {
         try
         {
@@ -36,11 +36,11 @@ public static class ProcessedOrderEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> GetPaymentByIdAsync([FromServices] IProcessedOrderRepository repo, string id)
+    public static async Task<IResult> GetPaymentByIdAsync([FromServices] IProcessedPaymentHistoryRepository repo, string id)
     {
         try
         {
-            var payment = await repo.GetByIdAsync(id);
+            var payment = await repo.GetByOrderIdAsync(id);
             return Results.Ok(payment);
         }
         catch (Exception e)
@@ -49,7 +49,7 @@ public static class ProcessedOrderEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> AddPaymentAsync([FromServices] IProcessedOrderRepository repo, [FromBody] ProcessedOrder payment)
+    public static async Task<IResult> AddPaymentAsync([FromServices] IProcessedPaymentHistoryRepository repo, [FromBody] PaymentHistory payment)
     {
         try
         {
@@ -63,7 +63,7 @@ public static class ProcessedOrderEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> UpdatePaymentAsync([FromServices] IProcessedOrderRepository repo, [FromBody] ProcessedOrder payment)
+    public static async Task<IResult> UpdatePaymentAsync([FromServices] IProcessedPaymentHistoryRepository repo, [FromBody] PaymentHistory payment)
     {
         try
         {
@@ -76,7 +76,7 @@ public static class ProcessedOrderEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> DeletePaymentAsync([FromServices] IProcessedOrderRepository repo, string id)
+    public static async Task<IResult> DeletePaymentAsync([FromServices] IProcessedPaymentHistoryRepository repo, string id)
     {
         try
         {

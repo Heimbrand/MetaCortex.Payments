@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using MetaCortex.Payments.API.Extensions;
 using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
 using MetaCortex.Payments.DataAccess.RabbitMq;
@@ -11,18 +12,19 @@ public class MessageConsumerService : IMessageConsumerService
 {
     private readonly IChannel _channel;
     private readonly IConnection _connection;
-    private const string QueueName = "order-to-payment";
     private readonly ProcessConsumedOrderService _processedOrderService;
     private readonly IMessageProducerService _messageProducerService;
     private readonly ILogger<MessageConsumerService> _logger;
+    private readonly IProcessedPaymentHistoryRepository _processedPaymentHistoryRepository;
 
-    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedOrderRepository processedOrderRepository, IMessageProducerService messageProducerService, ILogger<MessageConsumerService> logger)
+    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedPaymentHistoryRepository processedPaymentHistoryRepository, IMessageProducerService messageProducerService, ILogger<MessageConsumerService> logger)
     {
         _connection = rabbitMqService.CreateConnection().Result;
         _channel = _connection.CreateChannelAsync().Result;
-        _processedOrderService = new ProcessConsumedOrderService(processedOrderRepository);
+        _processedOrderService = new ProcessConsumedOrderService(processedPaymentHistoryRepository);
         _messageProducerService = messageProducerService;
         _logger = logger;
+        _processedPaymentHistoryRepository = processedPaymentHistoryRepository;
     }
 
     public async Task ReadMessagesAsync(string quename)
@@ -42,6 +44,16 @@ public class MessageConsumerService : IMessageConsumerService
                     {
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
                         _logger.LogInformation($"ORDER PROCESSED: {processedPayment}");
+
+                        var newPaymentHistory = new PaymentHistory
+                        {
+                            Id = processedPayment?.Id,
+                            PaymentMethod = processedPayment?.PaymentPlan?.PaymentMethod,
+                            IsPaid = processedPayment?.PaymentPlan?.IsPaid
+                        };
+
+                        await ProcessedOrderEndpointExtensions.AddPaymentAsync(_processedPaymentHistoryRepository, newPaymentHistory);
+
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
                         _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\n{processedPayment?.Id},\n{processedPayment?.PaymentPlan?.PaymentMethod},\n{processedPayment?.PaymentPlan?.IsPaid},");
                     }

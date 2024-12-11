@@ -17,7 +17,7 @@ builder.Services.AddSingleton<IMongoClient>( serviceProvider =>
     var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
     return new MongoClient($"mongodb://{settings.Host}:{settings.Port}");
 });
-builder.Services.AddSingleton<IProcessedOrderRepository, ProcessedOrderRepository>();
+builder.Services.AddSingleton<IProcessedPaymentHistoryRepository, ProcessedPaymentHistoryRepository>();
 builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqSettings"));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value);
 builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();

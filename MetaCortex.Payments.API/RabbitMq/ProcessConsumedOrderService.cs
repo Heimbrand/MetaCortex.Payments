@@ -7,12 +7,12 @@ namespace MetaCortex.Payments.API.RabbitMq;
 
 public class ProcessConsumedOrderService
 {
-    private readonly IProcessedOrderRepository _processedOrderRepository;
+    private readonly IProcessedPaymentHistoryRepository _processedPaymentHistoryRepository;
     private readonly MapOrderToIsPaidIsTrue _mapper;
 
-    public ProcessConsumedOrderService(IProcessedOrderRepository processedOrderRepository)
+    public ProcessConsumedOrderService(IProcessedPaymentHistoryRepository processedPaymentHistoryRepository)
     {
-        _processedOrderRepository = processedOrderRepository;
+        _processedPaymentHistoryRepository = processedPaymentHistoryRepository;
         _mapper = new MapOrderToIsPaidIsTrue();
     }
 

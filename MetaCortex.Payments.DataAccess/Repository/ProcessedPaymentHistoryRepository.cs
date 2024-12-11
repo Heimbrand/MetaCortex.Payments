@@ -7,20 +7,18 @@ using Microsoft.Extensions.Options;
 
 namespace MetaCortex.Payments.DataAccess.Repository;
 
-public class ProcessedOrderRepository : IProcessedOrderRepository
+public class ProcessedPaymentHistoryRepository : IProcessedPaymentHistoryRepository
 {
-    private readonly IMongoCollection<ProcessedOrder> _collection;
+    private readonly IMongoCollection<PaymentHistory> _collection;
 
-    public ProcessedOrderRepository(IMongoClient mongoClient, IOptions<MongoDbSettings> mongoDbSettings)
+    public ProcessedPaymentHistoryRepository(IMongoClient mongoClient, IOptions<MongoDbSettings> mongoDbSettings)
     {
         var setting = mongoDbSettings.Value;
         var database = mongoClient.GetDatabase(setting.DatabaseName);
-        _collection = database.GetCollection<ProcessedOrder>(setting.CollectionName, new MongoCollectionSettings { AssignIdOnInsert = true });
+        _collection = database.GetCollection<PaymentHistory>(setting.CollectionName, new MongoCollectionSettings { AssignIdOnInsert = true });
     }
-    public async Task<IEnumerable<ProcessedOrder>> GetAllAsync()
+    public async Task<IEnumerable<PaymentHistory>> GetAllAsync()
     {
-        
-
         var payments = await _collection.Find(new BsonDocument()).ToListAsync();
 
         if (payments is null || !payments.Any())
@@ -28,26 +26,26 @@ public class ProcessedOrderRepository : IProcessedOrderRepository
         
         return payments;
     }
-    public async Task<ProcessedOrder> GetByIdAsync(string id)
+    public async Task<PaymentHistory> GetByOrderIdAsync(string orderId)
     {
-        var paymentByid =  await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
+        var paymentByid =  await _collection.Find(x => x.Id == orderId).FirstOrDefaultAsync();
 
         if (paymentByid is null)
             throw new Exception("Payment not found");
 
         return paymentByid;
     }
-    public async Task AddAsync(ProcessedOrder entity)
+    public async Task AddAsync(PaymentHistory entity)
     {
         await _collection.InsertOneAsync(entity);
     }
-    public async Task UpdateAsync(ProcessedOrder entity)
+    public async Task UpdateAsync(PaymentHistory entity)
     {
         await _collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
     }
     public async Task DeleteAsync(string id)
     {
-        var PaymentToDelete = await GetByIdAsync(id);
+        var PaymentToDelete = await GetByOrderIdAsync(id);
 
         await _collection.DeleteOneAsync(x => x.Id == PaymentToDelete.Id);
     }

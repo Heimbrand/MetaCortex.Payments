@@ -2,7 +2,7 @@
 
 namespace MetaCortex.Payments.DataAccess.Interfaces;
 
-public interface IProcessedOrderRepository : IRepository<ProcessedOrder, string>
+public interface IProcessedPaymentHistoryRepository : IRepository<PaymentHistory, string>
 {
     
 }
