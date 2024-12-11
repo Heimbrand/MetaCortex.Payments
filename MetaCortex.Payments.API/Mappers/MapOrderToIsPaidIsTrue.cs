@@ -13,14 +13,13 @@ public class MapOrderToIsPaidIsTrue
         {
             return new ProcessedOrder
             {
-                OrderId = orderDto.OrderId,
+                Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
                 Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
-                    OrderId = orderDto.OrderId,
                     PaymentMethod = orderDto.PaymentMethod,
                     IsPaid =true,
                 }
@@ -36,14 +35,13 @@ public class MapOrderToIsPaidIsTrue
         {
             return new ProcessedOrder
             {
-                OrderId = orderDto.OrderId,
+                Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
                 Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
-                    OrderId = orderDto.OrderId,
                     PaymentMethod = orderDto.PaymentMethod,
                     IsPaid = true,
                 }
@@ -58,14 +56,13 @@ public class MapOrderToIsPaidIsTrue
         {
             return new ProcessedOrder
             {
-                OrderId = orderDto.OrderId,
+                Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
                 Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
-                    OrderId = orderDto.OrderId,
                     PaymentMethod = orderDto.PaymentMethod,
                     IsPaid = true,
                 }
@@ -80,14 +77,13 @@ public class MapOrderToIsPaidIsTrue
         {
             return new ProcessedOrder
             {
-                OrderId = orderDto.OrderId,
+                Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
                 Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
-                    OrderId = orderDto.OrderId,
                     PaymentMethod = orderDto.PaymentMethod,
                     IsPaid = true,
                 }
@@ -103,15 +99,14 @@ public class MapOrderToIsPaidIsTrue
         {
             return new ProcessedOrder
             {
-                OrderId = orderDto.OrderId,
+                Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
                 Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
-                    OrderId = orderDto.OrderId,
-                    PaymentMethod = "Invalid payment method",
+                    PaymentMethod = "Invalid payment",
                     IsPaid = false,
                 }
             };
