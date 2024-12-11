@@ -49,14 +49,11 @@ public static class ProcessedOrderEndpointExtensions
             return Results.BadRequest(e.Message);
         }
     }
-    public static async Task<IResult> AddPaymentAsync([FromServices] IProcessedOrderRepository repo, IMessageConsumerService messageConsumer, IMessageProducerService messageProducer, [FromBody] ProcessedOrder payment)
+    public static async Task<IResult> AddPaymentAsync([FromServices] IProcessedOrderRepository repo, [FromBody] ProcessedOrder payment)
     {
         try
         {
             await repo.AddAsync(payment);
-
-            await messageConsumer.ReadMessagesAsync();
-            await messageProducer.SendPaymentToOrderAsync(payment, sendChannel: "test");
 
             return Results.Created($"/api/payments/{payment.Id}", payment);
         }
