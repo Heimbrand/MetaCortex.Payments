@@ -26,16 +26,16 @@ public class ProcessConsumedOrderService
                 return _mapper.MapIncomingCreditCardOrder(order);
                 
             case "Swish":
-                return _mapper.MapIncomingCreditCardOrder(order);
+                return _mapper.MapIncomingSwishOrder(order);
 
             case "Klarna":
-                return _mapper.MapIncomingCreditCardOrder(order);
+                return _mapper.MapIncomingKlarnaOrder(order);
 
             case "Stripe":
-                return _mapper.MapIncomingCreditCardOrder(order);
+                return _mapper.MapIncomingStripeOrder(order);
 
             default:
-                return null;
+                return _mapper.MapIncomingInvalidPayment(order);
         }
     }
 }
