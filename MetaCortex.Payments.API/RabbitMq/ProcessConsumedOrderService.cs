@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using MetaCortex.Payments.API.Mappers;
 using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
 
@@ -7,34 +8,24 @@ namespace MetaCortex.Payments.API.RabbitMq;
 public class ProcessConsumedOrderService
 {
     private readonly IProcessedOrderRepository _processedOrderRepository;
+    private readonly MapOrderToIsPaidIsTrue _mapper;
+
     public ProcessConsumedOrderService(IProcessedOrderRepository processedOrderRepository)
     {
         _processedOrderRepository = processedOrderRepository;
+        _mapper = new MapOrderToIsPaidIsTrue();
     }
+
     public async Task<ProcessedOrder> ProcessOrderAsync(string order)
     {
-        var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
+        var processedOrder = _mapper.MapIncomingOrderToIsPaid(order);
 
-        if (orderDto is not null)
+        if (processedOrder is not null)
         {
-            var ProcessedOrder = new ProcessedOrder
-            {
-                OrderId = orderDto.OrderId,
-                OrderDate = orderDto.OrderDate,
-                CustomerId = orderDto.CustomerId,
-                VIPStatus = orderDto.VIPStatus,
-                Products = orderDto.Products,
-                PaymentPlan = new Payment
-                {
-                    OrderId = orderDto.OrderId,
-                    PaymentMethod = orderDto.PaymentMethod,
-                    IsPaid = orderDto.IsPaid,
-                }
-            };
-            await _processedOrderRepository.AddAsync(ProcessedOrder);
-           
-            return ProcessedOrder;
+            await _processedOrderRepository.AddAsync(processedOrder);
+            return processedOrder;
         }
+
         return null;
     }
 }
