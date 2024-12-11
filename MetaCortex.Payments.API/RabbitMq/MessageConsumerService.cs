@@ -32,8 +32,16 @@ public class MessageConsumerService : IMessageConsumerService
         {
             var body = ea.Body.ToArray();
             var payment = Encoding.UTF8.GetString(body);
-            var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-            await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
+            try
+            {
+                var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
+                await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Payment method needs to be one of the following:\n 'CreditCard'\n'Swish'\n'Klarna'\n'Stripe'");
+                Console.WriteLine(e.Message);
+            }
         };
 
         await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);

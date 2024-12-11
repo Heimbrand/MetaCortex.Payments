@@ -5,7 +5,7 @@ namespace MetaCortex.Payments.API.Mappers;
 
 public class MapOrderToIsPaidIsTrue
 {
-    public ProcessedOrder MapIncomingOrderToIsPaid(string order)
+    public ProcessedOrder MapIncomingCreditCardOrder(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
@@ -21,7 +21,7 @@ public class MapOrderToIsPaidIsTrue
                 PaymentPlan = new Payment
                 {
                     OrderId = orderDto.OrderId,
-                    PaymentMethod = "Whatever payment method Anders chosed",
+                    PaymentMethod = orderDto.PaymentMethod,
                     IsPaid =true,
                 }
             };

@@ -18,14 +18,24 @@ public class ProcessConsumedOrderService
 
     public async Task<ProcessedOrder> ProcessOrderAsync(string order)
     {
-        var processedOrder = _mapper.MapIncomingOrderToIsPaid(order);
+        var deserializedOrder = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
-        if (processedOrder is not null)
+        switch (deserializedOrder.PaymentMethod)
         {
-            await _processedOrderRepository.AddAsync(processedOrder);
-            return processedOrder;
-        }
+            case "CreditCard":
+                return _mapper.MapIncomingCreditCardOrder(order);
+                
+            case "Swish":
+                return _mapper.MapIncomingCreditCardOrder(order);
 
-        return null;
+            case "Klarna":
+                return _mapper.MapIncomingCreditCardOrder(order);
+
+            case "Stripe":
+                return _mapper.MapIncomingCreditCardOrder(order);
+
+            default:
+                return null;
+        }
     }
 }
