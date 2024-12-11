@@ -14,14 +14,16 @@ public class MessageConsumerService : IMessageConsumerService
     private const string QueueName = "order-to-payment";
     private readonly ProcessConsumedOrderService _processedOrderService;
     private readonly IMessageProducerService _messageProducerService;
+    private readonly ILogger<MessageConsumerService> _logger;
 
-    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedOrderRepository processedOrderRepository, IMessageProducerService messageProducerService)
+    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedOrderRepository processedOrderRepository, IMessageProducerService messageProducerService, ILogger<MessageConsumerService>logger)
     {
         _connection = rabbitMqService.CreateConnection().Result;
         _channel = _connection.CreateChannelAsync().Result;
         _channel.QueueDeclareAsync(QueueName, false, false, false).Wait();
         _processedOrderService = new ProcessConsumedOrderService(processedOrderRepository);
         _messageProducerService = messageProducerService;
+        _logger = logger;
     }
 
     public async Task ReadMessagesAsync()
@@ -32,8 +34,10 @@ public class MessageConsumerService : IMessageConsumerService
         {
             var body = ea.Body.ToArray();
             var payment = Encoding.UTF8.GetString(body);
+            _logger.LogInformation($"ORDER RECIEVED: {payment}");
 
             var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
+            _logger.LogInformation($"ORDER PROCESSED: {processedPayment}");
             await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
         };
 
