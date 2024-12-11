@@ -47,9 +47,11 @@ public class MessageConsumerService : IMessageConsumerService
 
                         var newPaymentHistory = new PaymentHistory
                         {
-                            Id = processedPayment?.Id,
+                            OrderId = processedPayment?.Id,
                             PaymentMethod = processedPayment?.PaymentPlan?.PaymentMethod,
-                            IsPaid = processedPayment?.PaymentPlan?.IsPaid
+                            IsPaid = processedPayment?.PaymentPlan?.IsPaid,
+                            PaymentDate = DateTime.UtcNow
+
                         };
 
                         await ProcessedOrderEndpointExtensions.AddPaymentAsync(_processedPaymentHistoryRepository, newPaymentHistory);
