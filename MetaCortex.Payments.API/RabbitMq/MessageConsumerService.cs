@@ -36,11 +36,18 @@ public class MessageConsumerService : IMessageConsumerService
             var payment = Encoding.UTF8.GetString(body);
             _logger.LogInformation($"ORDER RECIEVED: {payment}");
 
-            var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-            _logger.LogInformation($"ORDER PROCESSED: {processedPayment}");
-            await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
+            try
+            {
+                var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
+                _logger.LogInformation($"ORDER PROCESSED: {processedPayment}");
+                await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
+                _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\n{processedPayment.Id},\n{processedPayment.PaymentPlan.PaymentMethod},\n{processedPayment.PaymentPlan.IsPaid},");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error processing order: {e.Message}");
+            }
         };
-
         await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
         await Task.CompletedTask;
     }
