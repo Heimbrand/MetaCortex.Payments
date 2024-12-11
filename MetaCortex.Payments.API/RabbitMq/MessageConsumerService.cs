@@ -43,7 +43,7 @@ public class MessageConsumerService : IMessageConsumerService
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
                         _logger.LogInformation($"ORDER PROCESSED: {processedPayment}");
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
-                        _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\n{processedPayment.Id},\n{processedPayment.PaymentPlan.PaymentMethod},\n{processedPayment.PaymentPlan.IsPaid},");
+                        _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\n{processedPayment?.Id},\n{processedPayment?.PaymentPlan?.PaymentMethod},\n{processedPayment?.PaymentPlan?.IsPaid},");
                     }
                     catch (Exception e)
                     {

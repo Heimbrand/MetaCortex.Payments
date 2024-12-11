@@ -16,26 +16,26 @@ public class ProcessConsumedOrderService
         _mapper = new MapOrderToIsPaidIsTrue();
     }
 
-    public async Task<ProcessedOrder> ProcessOrderAsync(string order)
+    public Task<ProcessedOrder?> ProcessOrderAsync(string order)
     {
         var deserializedOrder = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
-        switch (deserializedOrder.PaymentMethod)
+        switch (deserializedOrder?.PaymentMethod)
         {
             case "CreditCard":
-                return _mapper.MapIncomingCreditCardOrder(order);
+                return Task.FromResult(_mapper.MapIncomingCreditCardOrder(order));
                 
             case "Swish":
-                return _mapper.MapIncomingSwishOrder(order);
+                return Task.FromResult(_mapper.MapIncomingSwishOrder(order));
 
             case "Klarna":
-                return _mapper.MapIncomingKlarnaOrder(order);
+                return Task.FromResult(_mapper.MapIncomingKlarnaOrder(order));
 
             case "Stripe":
-                return _mapper.MapIncomingStripeOrder(order);
+                return Task.FromResult(_mapper.MapIncomingStripeOrder(order));
 
             default:
-                return _mapper.MapIncomingInvalidPayment(order);
+                return Task.FromResult(_mapper.MapIncomingInvalidPayment(order));
         }
     }
 }

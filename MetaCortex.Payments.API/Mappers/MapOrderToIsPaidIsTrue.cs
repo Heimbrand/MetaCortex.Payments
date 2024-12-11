@@ -5,7 +5,7 @@ namespace MetaCortex.Payments.API.Mappers;
 
 public class MapOrderToIsPaidIsTrue
 {
-    public ProcessedOrder MapIncomingCreditCardOrder(string order)
+    public ProcessedOrder? MapIncomingCreditCardOrder(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
@@ -27,7 +27,7 @@ public class MapOrderToIsPaidIsTrue
         }
         return null;
     }
-    public ProcessedOrder MapIncomingSwishOrder(string order)
+    public ProcessedOrder? MapIncomingSwishOrder(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
@@ -49,7 +49,7 @@ public class MapOrderToIsPaidIsTrue
         }
         return null;
     }
-    public ProcessedOrder MapIncomingKlarnaOrder(string order)
+    public ProcessedOrder? MapIncomingKlarnaOrder(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
         if (orderDto is not null)
@@ -70,7 +70,7 @@ public class MapOrderToIsPaidIsTrue
         }
         return null;
     }
-    public ProcessedOrder MapIncomingStripeOrder(string order)
+    public ProcessedOrder? MapIncomingStripeOrder(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
         if (orderDto is not null)
@@ -91,7 +91,7 @@ public class MapOrderToIsPaidIsTrue
         }
         return null;
     }
-    public ProcessedOrder MapIncomingInvalidPayment(string order)
+    public ProcessedOrder? MapIncomingInvalidPayment(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
