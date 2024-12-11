@@ -55,6 +55,7 @@ public class MessageConsumerService : IMessageConsumerService
                         };
 
                         await ProcessedOrderEndpointExtensions.AddPaymentAsync(_processedPaymentHistoryRepository, newPaymentHistory);
+                        _logger.LogInformation($"ORDER SAVED TO DATABASE: {newPaymentHistory}");
 
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
                         _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\n{processedPayment?.Id},\n{processedPayment?.PaymentPlan?.PaymentMethod},\n{processedPayment?.PaymentPlan?.IsPaid},");
