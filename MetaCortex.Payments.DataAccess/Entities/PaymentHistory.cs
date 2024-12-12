@@ -6,5 +6,6 @@ public class PaymentHistory : BaseDocument
     public string? PaymentMethod { get; set; }
     public bool? IsPaid { get; set; }
     public DateTime? PaymentDate { get; set; }
+    public List<Products>? Products { get; set; }
 
 }

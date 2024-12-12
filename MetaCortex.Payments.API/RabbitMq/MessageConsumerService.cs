@@ -50,9 +50,19 @@ public class MessageConsumerService : IMessageConsumerService
                             OrderId = processedPayment?.Id,
                             PaymentMethod = processedPayment?.PaymentPlan?.PaymentMethod,
                             IsPaid = processedPayment?.PaymentPlan?.IsPaid,
-                            PaymentDate = DateTime.UtcNow
-
+                            PaymentDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
                         };
+
+                        foreach (var product in processedPayment.Products)
+                        {
+                            newPaymentHistory.Products.Add(new Products
+                            {
+                                id = product.id,
+                                Name = product.Name,
+                                Price = product.Price,
+                                Quantity = product.Quantity
+                            });
+                        }
 
                         await ProcessedOrderEndpointExtensions.AddPaymentAsync(_processedPaymentHistoryRepository, newPaymentHistory);
                         _logger.LogInformation($"ORDER SAVED TO DATABASE: {newPaymentHistory}");
