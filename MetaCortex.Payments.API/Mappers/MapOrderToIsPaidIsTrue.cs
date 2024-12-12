@@ -30,10 +30,10 @@ public class MapOrderToIsPaidIsTrue
                 {
                     new Products
                     {
-                        id = orderDto.Products.FirstOrDefault()!.id,
-                        Name = orderDto.Products.FirstOrDefault()!.Name,
-                        Price = orderDto.Products.FirstOrDefault()!.Price,
-                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                        id = product.id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Quantity = product.Quantity
                     };
                 });
             }
@@ -66,10 +66,10 @@ public class MapOrderToIsPaidIsTrue
                 {
                     new Products
                     {
-                        id = orderDto.Products.FirstOrDefault()!.id,
-                        Name = orderDto.Products.FirstOrDefault()!.Name,
-                        Price = orderDto.Products.FirstOrDefault()!.Price,
-                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                        id = product.id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Quantity = product.Quantity
                     };
                 });
             }
@@ -102,10 +102,10 @@ public class MapOrderToIsPaidIsTrue
                 {
                     new Products
                     {
-                        id = orderDto.Products.FirstOrDefault()!.id,
-                        Name = orderDto.Products.FirstOrDefault()!.Name,
-                        Price = orderDto.Products.FirstOrDefault()!.Price,
-                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                        id = product.id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Quantity = product.Quantity
                     };
                 });
             }
@@ -138,10 +138,10 @@ public class MapOrderToIsPaidIsTrue
                 {
                     new Products
                     {
-                        id = orderDto.Products.FirstOrDefault()!.id,
-                        Name = orderDto.Products.FirstOrDefault()!.Name,
-                        Price = orderDto.Products.FirstOrDefault()!.Price,
-                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                        id = product.id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Quantity = product.Quantity
                     };
                 });
             }
@@ -174,10 +174,10 @@ public class MapOrderToIsPaidIsTrue
                 {
                     new Products
                     {
-                        id = orderDto.Products.FirstOrDefault()!.id,
-                        Name = orderDto.Products.FirstOrDefault()!.Name,
-                        Price = orderDto.Products.FirstOrDefault()!.Price,
-                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                        id = product.id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Quantity = product.Quantity
                     };
                 });
             }
