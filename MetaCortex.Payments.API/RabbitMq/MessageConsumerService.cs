@@ -56,11 +56,11 @@ public class MessageConsumerService : IMessageConsumerService
                     {
                         _logger.LogError($"Error processing order: {e.Message}");
                     }
-                    finally
-                    {
-                        var processDeserializedAgain = await _processedOrderService.ProcessOrderAsync(payment);
-                        await SavePaymentHistoryToDatabase(processDeserializedAgain);
-                    }
+                    //finally
+                    //{
+                    //    var processDeserializedAgain = await _processedOrderService.ProcessOrderAsync(payment);
+                    //    await SavePaymentHistoryToDatabase(processDeserializedAgain);
+                    //}
                 };
             await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
             await Task.CompletedTask;
