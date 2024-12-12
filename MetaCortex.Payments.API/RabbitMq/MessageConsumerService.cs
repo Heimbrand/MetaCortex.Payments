@@ -45,7 +45,7 @@ public class MessageConsumerService : IMessageConsumerService
                     try
                     {
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-                        _logger.LogInformation($"ORDER PROCESSED:\nCustomer Id:{deserialized.CustomerId},\nOrder date: {deserialized.OrderDate},\nOrder Id:{deserialized.Id}, \nPayment method: {deserialized.PaymentMethod}, \nIs it paid?:{deserialized.PaymentPlan.IsPaid}");
+                        _logger.LogInformation($"ORDER PROCESSED:\nCustomer Id:{deserialized.CustomerId},\nOrder date: {deserialized.OrderDate},\nOrder Id:{deserialized.Id}, \nPayment method: {deserialized.PaymentMethod}");
 
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
                         _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\nId: {processedPayment?.Id},\nPayment Method:{processedPayment?.PaymentPlan?.PaymentMethod},\nIs it paid?:{processedPayment?.PaymentPlan?.IsPaid},");
