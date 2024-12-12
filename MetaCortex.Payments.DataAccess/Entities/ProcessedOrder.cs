@@ -6,6 +6,6 @@ public class ProcessedOrder : BaseDocument
     public string? CustomerId { get; set; }
     public string? PaymentMethod { get; set; }
     public bool? VIPStatus { get; set; }
-    public List<string>? Products { get; set; }
+    public List<Products>? Products { get; set; }
     public Payment? PaymentPlan { get; set; }
 }

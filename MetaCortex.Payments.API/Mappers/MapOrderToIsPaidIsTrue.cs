@@ -11,19 +11,33 @@ public class MapOrderToIsPaidIsTrue
 
         if (orderDto is not null)
         {
-            return new ProcessedOrder
+            var processOrder = new ProcessedOrder
             {
                 Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
-                Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
                     PaymentMethod = orderDto.PaymentMethod,
-                    IsPaid =true,
+                    IsPaid = true,
                 }
             };
+
+            if (orderDto.Products is not null)
+            {
+                orderDto.Products.ForEach(product =>
+                {
+                    new Products
+                    {
+                        id = orderDto.Products.FirstOrDefault()!.id,
+                        Name = orderDto.Products.FirstOrDefault()!.Name,
+                        Price = orderDto.Products.FirstOrDefault()!.Price,
+                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                    };
+                });
+            }
+            return processOrder;
         }
         return null;
     }
@@ -33,61 +47,105 @@ public class MapOrderToIsPaidIsTrue
 
         if (orderDto is not null)
         {
-            return new ProcessedOrder
+            var processOrder = new ProcessedOrder
             {
                 Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
-                Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
                     PaymentMethod = orderDto.PaymentMethod,
                     IsPaid = true,
                 }
             };
+
+            if (orderDto.Products is not null)
+            {
+                orderDto.Products.ForEach(product =>
+                {
+                    new Products
+                    {
+                        id = orderDto.Products.FirstOrDefault()!.id,
+                        Name = orderDto.Products.FirstOrDefault()!.Name,
+                        Price = orderDto.Products.FirstOrDefault()!.Price,
+                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                    };
+                });
+            }
+            return processOrder;
         }
         return null;
     }
     public ProcessedOrder? MapIncomingKlarnaOrder(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
+
         if (orderDto is not null)
         {
-            return new ProcessedOrder
+            var processOrder = new ProcessedOrder
             {
                 Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
-                Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
                     PaymentMethod = orderDto.PaymentMethod,
                     IsPaid = true,
                 }
             };
+
+            if (orderDto.Products is not null)
+            {
+                orderDto.Products.ForEach(product =>
+                {
+                    new Products
+                    {
+                        id = orderDto.Products.FirstOrDefault()!.id,
+                        Name = orderDto.Products.FirstOrDefault()!.Name,
+                        Price = orderDto.Products.FirstOrDefault()!.Price,
+                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                    };
+                });
+            }
+            return processOrder;
         }
         return null;
     }
     public ProcessedOrder? MapIncomingStripeOrder(string order)
     {
         var orderDto = JsonSerializer.Deserialize<ProcessedOrder>(order);
+
         if (orderDto is not null)
         {
-            return new ProcessedOrder
+            var processOrder = new ProcessedOrder
             {
                 Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
-                Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
                     PaymentMethod = orderDto.PaymentMethod,
                     IsPaid = true,
                 }
             };
+
+            if (orderDto.Products is not null)
+            {
+                orderDto.Products.ForEach(product =>
+                {
+                    new Products
+                    {
+                        id = orderDto.Products.FirstOrDefault()!.id,
+                        Name = orderDto.Products.FirstOrDefault()!.Name,
+                        Price = orderDto.Products.FirstOrDefault()!.Price,
+                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                    };
+                });
+            }
+            return processOrder;
         }
         return null;
     }
@@ -97,19 +155,33 @@ public class MapOrderToIsPaidIsTrue
 
         if (orderDto is not null)
         {
-            return new ProcessedOrder
+            var processOrder = new ProcessedOrder
             {
                 Id = orderDto.Id,
                 OrderDate = orderDto.OrderDate,
                 CustomerId = orderDto.CustomerId,
                 VIPStatus = orderDto.VIPStatus,
-                Products = orderDto.Products,
                 PaymentPlan = new Payment
                 {
-                    PaymentMethod = "Invalid payment",
+                    PaymentMethod = "Invalid payment method",
                     IsPaid = false,
                 }
             };
+
+            if (orderDto.Products is not null)
+            {
+                orderDto.Products.ForEach(product =>
+                {
+                    new Products
+                    {
+                        id = orderDto.Products.FirstOrDefault()!.id,
+                        Name = orderDto.Products.FirstOrDefault()!.Name,
+                        Price = orderDto.Products.FirstOrDefault()!.Price,
+                        Quantity = orderDto.Products.FirstOrDefault()!.Quantity
+                    };
+                });
+            }
+            return processOrder;
         }
         return null;
     }
