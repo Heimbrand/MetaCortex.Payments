@@ -45,14 +45,21 @@ public class MessageConsumerService : IMessageConsumerService
                     try
                     {
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-                        _logger.LogInformation($"ORDER PROCESSED:\nCustomer Id:{deserialized.CustomerId},\nOrder date: {deserialized.OrderDate},\nOrder Id:{deserialized.Id}, \nPayment method: {deserialized.PaymentMethod}");
+                        _logger.LogInformation(
+                            $"ORDER PROCESSED:\nCustomer Id:{deserialized.CustomerId},\nOrder date: {deserialized.OrderDate},\nOrder Id:{deserialized.Id}, \nPayment method: {deserialized.PaymentMethod}");
 
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
-                        _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\nId: {processedPayment?.Id},\nPayment Method:{processedPayment?.PaymentPlan?.PaymentMethod},\nIs it paid?:{processedPayment?.PaymentPlan?.IsPaid},");
+                        _logger.LogInformation(
+                            $"ORDER SENT BACK TO ORDER SERVICE:\nId: {processedPayment?.Id},\nPayment Method:{processedPayment?.PaymentPlan?.PaymentMethod},\nIs it paid?:{processedPayment?.PaymentPlan?.IsPaid},");
                     }
                     catch (Exception e)
                     {
                         _logger.LogError($"Error processing order: {e.Message}");
+                    }
+                    finally
+                    {
+                        var processDeserializedAgain = await _processedOrderService.ProcessOrderAsync(payment);
+                        await SavePaymentHistoryToDatabase(processDeserializedAgain);
                     }
                 };
             await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
@@ -69,14 +76,17 @@ public class MessageConsumerService : IMessageConsumerService
             PaymentMethod = processedPayment.PaymentPlan?.PaymentMethod,
             IsPaid = processedPayment.PaymentPlan?.IsPaid,
             PaymentDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day),
-            Products = processedPayment.Products.Select(product => new Products
+        };
+        processedPayment.Products.ForEach(product =>
+        {
+            new Products
             {
                 id = product.id,
                 Name = product.Name,
                 Price = product.Price,
                 Quantity = product.Quantity
-            }).ToList()
-        };
+            };
+        });
 
         await _processedPaymentHistoryRepository.AddAsync(newPaymentHistory);
         _logger.LogInformation($"ORDER SAVED TO DATABASE: {newPaymentHistory}");
