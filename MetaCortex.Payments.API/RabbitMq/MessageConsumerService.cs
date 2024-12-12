@@ -45,27 +45,26 @@ public class MessageConsumerService : IMessageConsumerService
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
                         _logger.LogInformation($"ORDER PROCESSED: {processedPayment}");
 
-                        var newPaymentHistory = new PaymentHistory
-                        {
-                            OrderId = processedPayment?.Id,
-                            PaymentMethod = processedPayment?.PaymentPlan?.PaymentMethod,
-                            IsPaid = processedPayment?.PaymentPlan?.IsPaid,
-                            PaymentDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
-                        };
+                        //var newPaymentHistory = new PaymentHistory
+                        //{
+                        //    OrderId = processedPayment?.Id,
+                        //    PaymentMethod = processedPayment?.PaymentPlan?.PaymentMethod,
+                        //    IsPaid = processedPayment?.PaymentPlan?.IsPaid,
+                        //    PaymentDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
+                        //};
 
-                        foreach (var product in processedPayment.Products)
-                        {
-                            newPaymentHistory.Products.Add(new Products
-                            {
-                                id = product.id,
-                                Name = product.Name,
-                                Price = product.Price,
-                                Quantity = product.Quantity
-                            });
-                        }
+                        //if (processedPayment?.Products == null) return;
 
-                        //await ProcessedOrderEndpointExtensions.AddPaymentAsync(_processedPaymentHistoryRepository, newPaymentHistory);
-                        //_logger.LogInformation($"ORDER SAVED TO DATABASE: {newPaymentHistory}");
+                        //foreach (var product in processedPayment.Products)
+                        //{
+                        //    newPaymentHistory.Products.Add(new Products
+                        //    {
+                        //        id = product.id,
+                        //        Name = product.Name,
+                        //        Price = product.Price,
+                        //        Quantity = product.Quantity
+                        //    });
+                        //}
 
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
                         _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\n{processedPayment?.Id},\n{processedPayment?.PaymentPlan?.PaymentMethod},\n{processedPayment?.PaymentPlan?.IsPaid},");
