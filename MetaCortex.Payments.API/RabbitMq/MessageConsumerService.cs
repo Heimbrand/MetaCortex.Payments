@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using MetaCortex.Payments.API.Extensions;
 using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
@@ -38,36 +39,16 @@ public class MessageConsumerService : IMessageConsumerService
                 {
                     var body = ea.Body.ToArray();
                     var payment = Encoding.UTF8.GetString(body);
-                    _logger.LogInformation($"ORDER RECIEVED: {payment}");
+                    var deserialized = JsonSerializer.Deserialize<ProcessedOrder>(payment);
+                    _logger.LogInformation($"ORDER RECIEVED:\nCustomer Id:{deserialized.CustomerId},\nOrder date: {deserialized.OrderDate},\nOrder Id:{deserialized.Id}, \nPayment method: {deserialized.PaymentMethod}");
 
                     try
                     {
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-                        _logger.LogInformation($"ORDER PROCESSED: {processedPayment}");
-
-                        //var newPaymentHistory = new PaymentHistory
-                        //{
-                        //    OrderId = processedPayment?.Id,
-                        //    PaymentMethod = processedPayment?.PaymentPlan?.PaymentMethod,
-                        //    IsPaid = processedPayment?.PaymentPlan?.IsPaid,
-                        //    PaymentDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day)
-                        //};
-
-                        //if (processedPayment?.Products == null) return;
-
-                        //foreach (var product in processedPayment.Products)
-                        //{
-                        //    newPaymentHistory.Products.Add(new Products
-                        //    {
-                        //        id = product.id,
-                        //        Name = product.Name,
-                        //        Price = product.Price,
-                        //        Quantity = product.Quantity
-                        //    });
-                        //}
+                        _logger.LogInformation($"ORDER PROCESSED:\nCustomer Id:{deserialized.CustomerId},\nOrder date: {deserialized.OrderDate},\nOrder Id:{deserialized.Id}, \nPayment method: {deserialized.PaymentMethod}, \nIs it paid?:{deserialized.PaymentPlan.IsPaid}");
 
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
-                        _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\n{processedPayment?.Id},\n{processedPayment?.PaymentPlan?.PaymentMethod},\n{processedPayment?.PaymentPlan?.IsPaid},");
+                        _logger.LogInformation($"ORDER SENT BACK TO ORDER SERVICE:\nId: {processedPayment?.Id},\nPayment Method:{processedPayment?.PaymentPlan?.PaymentMethod},\nIs it paid?:{processedPayment?.PaymentPlan?.IsPaid},");
                     }
                     catch (Exception e)
                     {
