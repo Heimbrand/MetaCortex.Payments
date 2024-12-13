@@ -29,10 +29,8 @@ paymentId: The unique identifier of the payment to retrieve.
 Response:
 Status Code: 200 OK
 
-
 Error Response:
 Status Code: 404 Not Found
-
 
 ---
 ### 3. Get All Payments
@@ -43,9 +41,11 @@ Description: Retrieves a list of all payments.
 Response:
 Status Code: 200 OK
 
+Error Response:
+Status Code: 404 Not Found
 
 ---
-4. Delete a Payment
+### 4. Delete a Payment
 Endpoint: DELETE /api/payments/{paymentId}
 
 Description: Deletes a payment by its ID.
@@ -61,7 +61,7 @@ Status Code: 404 Not Found
 
 
 ---
-5. Update a Payment
+### 5. Update a Payment
 Endpoint: PUT /api/payments/{paymentId}
 
 Description: Updates an existing payment by its ID.
@@ -74,7 +74,6 @@ Content-Type: application/json
 ---
 Response:
 Status Code: 200 OK
-Response Body Example:
 
 Error Response:
 400 Bad Request: If the payment body is null or invalid.
