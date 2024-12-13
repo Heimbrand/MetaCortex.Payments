@@ -42,8 +42,16 @@ public class MessageConsumerService : IMessageConsumerService
                     try
                     {
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-                        _logger.LogInformation(
-                            $"ORDER PROCESSED:\nCustomer Id:{deserialized.CustomerId},\nOrder date: {deserialized.OrderDate},\nOrder Id:{deserialized.Id}, \nPayment method: {deserialized.PaymentMethod}");
+
+                        var paymentMethodMessage = processedPayment?.PaymentMethod switch
+                        {
+                            "CreditCard" => "CREDIT CARD PAYMENT PROCESSED",
+                            "Swish" => "SWISH PAYMENT PROCESSED",
+                            "Klarna" => "KLARNA PAYMENT PROCESSED",
+                            "Stripe" => "STRIPE PAYMENT PROCESSED",
+                            _ => "INVALID PAYMENT METHOD, PAYMENT HAS NOT BEEN COMPLETED"
+                        };
+                        _logger.LogInformation(paymentMethodMessage);
 
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
                         _logger.LogInformation(
