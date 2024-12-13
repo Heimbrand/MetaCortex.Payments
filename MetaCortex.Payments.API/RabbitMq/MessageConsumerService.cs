@@ -43,16 +43,24 @@ public class MessageConsumerService : IMessageConsumerService
                     {
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
 
-                        var paymentMethodMessage = processedPayment?.PaymentMethod switch
+                        switch (processedPayment?.PaymentMethod)
                         {
-                            "CreditCard" => "CREDIT CARD PAYMENT PROCESSED",
-                            "Swish" => "SWISH PAYMENT PROCESSED",
-                            "Klarna" => "KLARNA PAYMENT PROCESSED",
-                            "Stripe" => "STRIPE PAYMENT PROCESSED",
-                            _ => "INVALID PAYMENT METHOD, PAYMENT HAS NOT BEEN COMPLETED"
-                        };
-                        _logger.LogInformation(paymentMethodMessage);
-
+                            case "CreditCard":
+                                _logger.LogInformation("Credit card payment processed");
+                                break;
+                            case "Swish":
+                                _logger.LogInformation("Swish payment processed");
+                                break;
+                            case "Klarna":
+                                _logger.LogInformation("Klarna payment processed");
+                                break;
+                            case "Stripe":
+                                _logger.LogInformation("Stripe payment processed");
+                                break;
+                            default:
+                                _logger.LogInformation("Invalid payment method");
+                                break;
+                        }
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
                         _logger.LogInformation(
                             $"ORDER SENT BACK TO ORDER SERVICE:\nId: {processedPayment?.Id},\nPayment Method:{processedPayment?.PaymentPlan?.PaymentMethod},\nIs it paid?:{processedPayment?.PaymentPlan?.IsPaid},");
