@@ -42,25 +42,8 @@ public class MessageConsumerService : IMessageConsumerService
                     try
                     {
                         var processedPayment = await _processedOrderService.ProcessOrderAsync(payment);
-
-                        switch (processedPayment?.PaymentMethod)
-                        {
-                            case "CreditCard":
-                                _logger.LogInformation("Credit card payment processed");
-                                break;
-                            case "Swish":
-                                _logger.LogInformation("Swish payment processed");
-                                break;
-                            case "Klarna":
-                                _logger.LogInformation("Klarna payment processed");
-                                break;
-                            case "Stripe":
-                                _logger.LogInformation("Stripe payment processed");
-                                break;
-                            default:
-                                _logger.LogInformation("Invalid payment method");
-                                break;
-                        }
+                        _logger.LogInformation("ORDER PROCESSED");
+                      
                         await _messageProducerService.SendPaymentToOrderAsync(processedPayment, "payment-to-order");
                         _logger.LogInformation(
                             $"ORDER SENT BACK TO ORDER SERVICE:\nId: {processedPayment?.Id},\nPayment Method:{processedPayment?.PaymentPlan?.PaymentMethod},\nIs it paid?:{processedPayment?.PaymentPlan?.IsPaid},");
