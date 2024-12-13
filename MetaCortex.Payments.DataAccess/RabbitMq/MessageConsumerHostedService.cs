@@ -7,7 +7,7 @@ public class MessageConsumerHostedService(IMessageConsumerService consumerServic
 { 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
+        // För framtid utveckling kan det vara bra att ha en lista av queNames som hämtas från kön
         var queNames = new[] { "order-to-payment",};
 
         foreach (var que in queNames)

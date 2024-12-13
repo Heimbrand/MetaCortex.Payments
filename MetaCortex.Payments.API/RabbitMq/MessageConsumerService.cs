@@ -13,24 +13,21 @@ public class MessageConsumerService : IMessageConsumerService
 {
     private readonly IChannel _channel;
     private readonly IConnection _connection;
-    private readonly ProcessConsumedOrderService _processedOrderService;
     private readonly IMessageProducerService _messageProducerService;
     private readonly ILogger<MessageConsumerService> _logger;
-    private readonly IProcessedPaymentHistoryRepository _processedPaymentHistoryRepository;
+    private readonly ProcessConsumedOrderService _processedOrderService;
 
-    public MessageConsumerService(IRabbitMqService rabbitMqService, IProcessedPaymentHistoryRepository processedPaymentHistoryRepository, IMessageProducerService messageProducerService, ILogger<MessageConsumerService> logger)
+    public MessageConsumerService(IRabbitMqService rabbitMqService, IMessageProducerService messageProducerService, ILogger<MessageConsumerService> logger)
     {
         _connection = rabbitMqService.CreateConnection().Result;
         _channel = _connection.CreateChannelAsync().Result;
-        _processedOrderService = new ProcessConsumedOrderService(processedPaymentHistoryRepository);
         _messageProducerService = messageProducerService;
         _logger = logger;
-        _processedPaymentHistoryRepository = processedPaymentHistoryRepository;
+        _processedOrderService = new ProcessConsumedOrderService();
     }
-
     public async Task ReadMessagesAsync(string quename)
     {
-        _channel.QueueDeclareAsync(quename, false, false, false).Wait();
+        await _channel.QueueDeclareAsync(quename, false, false, false);
         var consumer = new AsyncEventingBasicConsumer(_channel);
 
         if (quename == "order-to-payment")
@@ -56,39 +53,9 @@ public class MessageConsumerService : IMessageConsumerService
                     {
                         _logger.LogError($"Error processing order: {e.Message}");
                     }
-                    //finally
-                    //{
-                    //    var processDeserializedAgain = await _processedOrderService.ProcessOrderAsync(payment);
-                    //    await SavePaymentHistoryToDatabase(processDeserializedAgain);
-                    //}
                 };
             await _channel.BasicConsumeAsync(queue: "order-to-payment", autoAck: true, consumer: consumer);
             await Task.CompletedTask;
         }
-    }
-    private async Task SavePaymentHistoryToDatabase(ProcessedOrder? processedPayment)
-    {
-        if (processedPayment == null) return;
-
-        var newPaymentHistory = new PaymentHistory
-        {
-            OrderId = processedPayment.Id,
-            PaymentMethod = processedPayment.PaymentPlan?.PaymentMethod,
-            IsPaid = processedPayment.PaymentPlan?.IsPaid,
-            PaymentDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day),
-        };
-        processedPayment.Products.ForEach(product =>
-        {
-            new Products
-            {
-                id = product.id,
-                Name = product.Name,
-                Price = product.Price,
-                Quantity = product.Quantity
-            };
-        });
-
-        await _processedPaymentHistoryRepository.AddAsync(newPaymentHistory);
-        _logger.LogInformation($"ORDER SAVED TO DATABASE: {newPaymentHistory}");
     }
 }
