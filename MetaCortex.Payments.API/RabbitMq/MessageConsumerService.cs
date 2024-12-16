@@ -23,7 +23,7 @@ public class MessageConsumerService : IMessageConsumerService
         _channel = _connection.CreateChannelAsync().Result;
         _messageProducerService = messageProducerService;
         _logger = logger;
-        _processedOrderService = new ProcessConsumedOrderService();
+        _processedOrderService = processConsumedOrderService;
     }
     public async Task ReadMessagesAsync(string quename)
     {
