@@ -24,6 +24,7 @@ builder.Services.AddSingleton<IRabbitMqService, RabbitMqService>();
 builder.Services.AddSingleton<IMessageProducerService, MessageProducerService>();
 builder.Services.AddSingleton<IMessageConsumerService, MessageConsumerService>();
 builder.Services.AddHostedService<MessageConsumerHostedService>();
+builder.Services.AddTransient<IProcessConsumedOrderService, ProcessConsumedOrderService>();
 
 
 var app = builder.Build();

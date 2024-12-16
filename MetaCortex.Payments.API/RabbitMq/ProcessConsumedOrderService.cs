@@ -2,10 +2,11 @@
 using MetaCortex.Payments.API.Mappers;
 using MetaCortex.Payments.DataAccess.Entities;
 using MetaCortex.Payments.DataAccess.Interfaces;
+using MetaCortex.Payments.DataAccess.RabbitMq;
 
 namespace MetaCortex.Payments.API.RabbitMq;
 
-public class ProcessConsumedOrderService
+public class ProcessConsumedOrderService : IProcessConsumedOrderService
 {
     private readonly MapOrderToIsPaidIsTrue _mapper = new();
 

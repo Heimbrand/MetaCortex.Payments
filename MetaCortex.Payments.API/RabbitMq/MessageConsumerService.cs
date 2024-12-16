@@ -15,9 +15,9 @@ public class MessageConsumerService : IMessageConsumerService
     private readonly IConnection _connection;
     private readonly IMessageProducerService _messageProducerService;
     private readonly ILogger<MessageConsumerService> _logger;
-    private readonly ProcessConsumedOrderService _processedOrderService;
+    private readonly IProcessConsumedOrderService _processedOrderService;
 
-    public MessageConsumerService(IRabbitMqService rabbitMqService, IMessageProducerService messageProducerService, ILogger<MessageConsumerService> logger)
+    public MessageConsumerService(IRabbitMqService rabbitMqService, IMessageProducerService messageProducerService, ILogger<MessageConsumerService> logger, IProcessConsumedOrderService processConsumedOrderService)
     {
         _connection = rabbitMqService.CreateConnection().Result;
         _channel = _connection.CreateChannelAsync().Result;
