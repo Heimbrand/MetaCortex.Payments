@@ -11,6 +11,8 @@ public class ProcessConsumedOrderService
 
     public Task<ProcessedOrder?> ProcessOrderAsync(string order)
     {
+        // Metoderna inom min switch skiljer sig inte direkt jättemycket. Detta är mer en showcase av min ide om struktur för att hantera olika betalplaner. 
+        // Jag har ju uppenbarligen inte implementerat logiken för att hantera de olika betalsystemen. Därför blir det lite "på låtsas".
         var deserializedOrder = JsonSerializer.Deserialize<ProcessedOrder>(order);
 
         switch (deserializedOrder?.PaymentMethod)
