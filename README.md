@@ -1,14 +1,22 @@
+```csharp
+public class Payment : BaseDocument
+{
+    public string OrderId { get; set; }
+    public string PaymentMethod { get; set; }
+    public string Status { get; set; }
+}
+
 # Payment API Documentation
 
 ## 1. Create a Payment
-**Endpoint**: `POST /api/payments`
 
-**Description**: Creates a new payment.
+### Description
+Creates a new payment.
 
-### Request Body:
-**Content-Type**: `application/json`
+### Endpoint
+`POST /api/payments`
 
-**Example**:
+### Request Body
 ```json
 {
     "orderId": "12345",
@@ -16,114 +24,102 @@
     "status": "pending"
 }
 ```
----
-Response:
-Status Code: 201 Created
-Location: /api/payments/{paymentId}
 
-Response Body Example:
+### Response
+- **201 Created**
+  ```json
+  {
+      "paymentId": "64d2f6ae3f15c9a2e47a9f01",
+      "orderId": "12345",
+      "paymentMethod": "credit card",
+      "status": "pending"
+  }
+  ```
+- **400 Bad Request**
+  ```json
+  {
+      "message": "Payment data cannot be null"
+  }
+  ```
 
-```json
-{
-    "paymentId": "12345",
-    "orderId": "12345",
-    "paymentMethod": "credit card",
-    "status": "pending"
-}
-```
----
-Error Response:
-Status Code: 400 Bad Request
-Response Body:
-```json
-{
-    "message": "Payment data cannot be null"
-}
-```
----
-### 2. Get Payment by ID
-Endpoint: GET /api/payments/{paymentId}
+## 2. Get Payment by ID
 
-Description: Retrieves a payment by its ID.
+### Description
+Retrieves a payment by its ID.
 
-Request Parameters:
-paymentId: The unique identifier of the payment to retrieve.
-Response:
-Status Code: 200 OK
-Response Body Example:
-```json
-{
-    "id": "64d2f6ae3f15c9a2e47a9f01",
-    "orderId": "12345",
-    "paymentMethod": "credit card",
-    "status": "pending"
-}
-```
-Error Response:
-Status Code: 404 Not Found
-Response Body:
-```json
-{
-    "message": "Payment not found"
-}
-```
----
-### 3. Get All Payments
-Endpoint: GET /api/payments
+### Endpoint
+`GET /api/payments/{paymentId}`
 
-Description: Retrieves a list of all payments.
+### Response
+- **200 OK**
+  ```json
+  {
+      "id": "64d2f6ae3f15c9a2e47a9f01",
+      "orderId": "12345",
+      "paymentMethod": "credit card",
+      "status": "pending"
+  }
+  ```
+- **404 Not Found**
+  ```json
+  {
+      "message": "Payment not found"
+  }
+  ```
 
-Response:
-Status Code: 200 OK
-Response Body Example:
-```json
-[
-    {
-        "id": "64d2f6ae3f15c9a2e47a9f01",
-        "orderId": "12345",
-        "paymentMethod": "credit card",
-        "status": "pending"
-    },
-    {
-        "id": "64d2f6ae3f15c9a2e47a9f02",
-        "orderId": "12346",
-        "paymentMethod": "paypal",
-        "status": "completed"
-    }
-]
-```
----
-### 4. Delete a Payment
-Endpoint: DELETE /api/payments/{paymentId}
+## 3. Get All Payments
 
-Description: Deletes a payment by its ID.
+### Description
+Retrieves a list of all payments.
 
-Request Parameters:
-paymentId: The unique identifier of the payment to delete.
-Response:
-Status Code: 204 No Content
-Response Body: Empty (No content).
+### Endpoint
+`GET /api/payments`
 
-Error Response:
-Status Code: 404 Not Found
-Response Body:
-```json
-{
-    "message": "Payment not found"
-}
-```
----
-### 5. Update a Payment
-Endpoint: PUT /api/payments/{paymentId}
+### Response
+- **200 OK**
+  ```json
+  [
+      {
+          "id": "64d2f6ae3f15c9a2e47a9f01",
+          "orderId": "12345",
+          "paymentMethod": "credit card",
+          "status": "pending"
+      },
+      {
+          "id": "64d2f6ae3f15c9a2e47a9f02",
+          "orderId": "12346",
+          "paymentMethod": "paypal",
+          "status": "completed"
+      }
+  ]
+  ```
 
-Description: Updates an existing payment by its ID.
+## 4. Delete a Payment
 
-Request Parameters:
-paymentId: The unique identifier of the payment to update.
-Request Body:
-Content-Type: application/json
+### Description
+Deletes a payment by its ID.
 
-Example:
+### Endpoint
+`DELETE /api/payments/{paymentId}`
+
+### Response
+- **204 No Content** (Empty response body)
+- **404 Not Found**
+  ```json
+  {
+      "message": "Payment not found"
+  }
+  ```
+
+## 5. Update a Payment
+
+### Description
+Updates an existing payment by its ID.
+
+### Endpoint
+`PUT /api/payments/{paymentId}`
+
+### Request Body
 ```json
 {
     "orderId": "12345",
@@ -131,37 +127,48 @@ Example:
     "status": "completed"
 }
 ```
----
-Response:
-Status Code: 200 OK
-Response Body Example:
-```json
+
+### Response
+- **200 OK**
+  ```json
+  {
+      "id": "64d2f6ae3f15c9a2e47a9f01",
+      "orderId": "12345",
+      "paymentMethod": "credit card",
+      "status": "completed"
+  }
+  ```
+- **400 Bad Request**
+  ```json
+  {
+      "message": "Payment data cannot be null"
+  }
+  ```
+- **404 Not Found**
+  ```json
+  {
+      "message": "Payment not found"
+  }
+  ```
+
+## Supporting Request Models
+
+### PaymentCreateRequest
+```csharp
+public class PaymentCreateRequest
 {
-    "id": "64d2f6ae3f15c9a2e47a9f01",
-    "orderId": "12345",
-    "paymentMethod": "credit card",
-    "status": "completed"
+    public string OrderId { get; set; }
+    public string PaymentMethod { get; set; }
+    public string Status { get; set; }
 }
 ```
-Error Response:
-400 Bad Request: If the payment body is null or invalid.
-Response Body Example:
-```json
+
+### PaymentUpdateRequest
+```csharp
+public class PaymentUpdateRequest
 {
-    "message": "Payment data cannot be null"
+    public string PaymentMethod { get; set; }
+    public string Status { get; set; }
 }
 ```
-404 Not Found: If the payment with the specified paymentId is not found.
-Response Body Example:
-```json
-{
-    "message": "Payment not found"
-}
 ```
----
-## Summary  
-- `POST /api/payments` - Creates a new payment.  
-- `GET /api/payments/{paymentId}` - Retrieves a payment by ID.  
-- `GET /api/payments` - Retrieves all payments.  
-- `DELETE /api/payments/{paymentId}` - Deletes a payment by ID.  
-- `PUT /api/payments/{paymentId}` - Updates an existing payment by ID.
